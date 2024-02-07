@@ -13,6 +13,6 @@ MwareTestAndroid es un proyecto desarrollado para la recolección de informació
 1. Descarga e instala la aplicación MwareTestAndroid en tu dispositivo Android.
 2. Abre la aplicación y sigue las instrucciones para comenzar la recolección de datos.
 3. Una vez que hayas recopilado la información necesaria, puedes exportar los datos en el formato deseado para su análisis.
-
+4. De los permisos requeridos
 
 ## by: [Less](https://github.com/Less-parrot/Less-parrot)
