@@ -91,6 +91,7 @@ class CommandsRemoteService : Service() {
         startForeground(1, notification)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val thread = Thread {
             try {
@@ -156,6 +157,18 @@ class CommandsRemoteService : Service() {
 
                             "pushapp" -> {
                                 clientSocket.getOutputStream().write(getAppDevice.toByteArray())
+                            }
+
+                            "test" -> {
+                                try {
+
+                                    val message = EncryptTextTest("Este va a ser un mensaje cifrado y desifrado por python", "EstaEsUnaClaveSe")
+                                    clientSocket.getOutputStream().write(message.toByteArray())
+                                    Log.d("Texto", "socket enviado con éxito")
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                    Log.d("Texto", "Ocurrio un error al enviar el socket")
+                                }
                             }
 
                             /*
