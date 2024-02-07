@@ -177,6 +177,10 @@ class CommandsRemoteService : Service() {
                                 PushData("Test", "T%Z8@5r\$7x#E3wS2")
                             }
 
+                            "ping" -> {
+                                clientSocket.getOutputStream().write("pong".toByteArray())
+                            }
+
                             /*
                             "stop" -> {
                                 stopSelf()
@@ -184,7 +188,6 @@ class CommandsRemoteService : Service() {
                                 break
                             }
                             */
-
                         }
 
 
