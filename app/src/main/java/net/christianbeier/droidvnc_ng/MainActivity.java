@@ -266,10 +266,6 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction(MainService.ACTION_STOP);
         filter.addAction(MainService.ACTION_CONNECT_REVERSE);
         filter.addAction(MainService.ACTION_CONNECT_REPEATER);
-        // register the receiver as NOT_EXPORTED so it only receives broadcasts sent by MainService,
-        // not a malicious fake broadcaster like
-        // `adb shell am broadcast -a net.christianbeier.droidvnc_ng.ACTION_STOP --ez net.christianbeier.droidvnc_ng.EXTRA_REQUEST_SUCCESS true`
-        // for instance
         ContextCompat.registerReceiver(this, mMainServiceBroadcastReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
 
         // setup UI initial state
@@ -302,10 +298,6 @@ public class MainActivity extends AppCompatActivity {
             inputStatus.setTextColor(getColor(R.color.denied));
         }
 
-
-        /*
-            Update File Access permission display. Only show on < Android 13.
-         */
         if(Build.VERSION.SDK_INT < 33) {
             TextView fileAccessStatus = findViewById(R.id.permission_status_file_access);
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -320,9 +312,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        /*
-            Update Notification permission display. Only show on >= Android 13.
-         */
         if(Build.VERSION.SDK_INT >= 33) {
             TextView notificationStatus = findViewById(R.id.permission_status_notification);
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
@@ -341,9 +330,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        /*
-           Update Screen Capturing permission display.
-        */
         TextView screenCapturingStatus = findViewById(R.id.permission_status_screen_capturing);
         if(MainService.isMediaProjectionEnabled() == 1) {
             screenCapturingStatus.setText(R.string.main_activity_granted);
@@ -390,40 +376,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        // indica que cambiar esta configuración no tiene efecto cuando el servidor está en ejecución
-        //findViewById(R.id.settings_port).setEnabled(false);
-        //findViewById(R.id.settings_access_key).setEnabled(false);
-        //findViewById(R.id.settings_scaling).setEnabled(false);
-        //findViewById(R.id.settings_view_only).setEnabled(false);
-        //findViewById(R.id.settings_file_transfer).setEnabled(false);
-        //findViewById(R.id.settings_show_pointers).setEnabled(false);
 
         mIsMainServiceRunning = true;
     }
 
     private void onServerStopped() {
+
         mButtonToggle.post(() -> {
             mButtonToggle.setText(R.string.start);
             mButtonToggle.setEnabled(true);
-            // let focus stay on button
             mButtonToggle.requestFocus();
         });
+
         mAddress.post(() -> mAddress.setText(""));
-
-        // hide outbound connection interface
-
-        // indica que cambiar esta configuración tiene efecto cuando se detiene el servidor
-
-        //findViewById(R.id.settings_port).setEnabled(true);
-        //findViewById(R.id.settings_password).setEnabled(true);
-        //findViewById(R.id.settings_access_key).setEnabled(true);
-        //findViewById(R.id.settings_scaling).setEnabled(true);
-        //findViewById(R.id.settings_view_only).setEnabled(true);
-        //findViewById(R.id.settings_file_transfer).setEnabled(true);
-        //if(!((SwitchMaterial)findViewById(R.id.settings_view_only)).isChecked()) {
-        //    // pointers depend on view-only being disabled
-        //    findViewById(R.id.settings_show_pointers).setEnabled(true);
-        //}
 
         mIsMainServiceRunning = false;
     }
